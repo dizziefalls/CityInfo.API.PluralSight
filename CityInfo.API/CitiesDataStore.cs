@@ -7,8 +7,9 @@ namespace CityInfo.API
         public List<CityDto> Cities { get; set; }
 
         // Singleton pattern network. Provides a single instance of the data store to use while the server is running
-        public static CitiesDataStore Current { get; } = new CitiesDataStore();
-
+        // we're able to get rid of this static property by passing our class into the services container as a singleton and injecting it into the classes that use it
+        //public static CitiesDataStore Current { get; } = new CitiesDataStore();
+        
         public CitiesDataStore() 
         {
             Cities = new List<CityDto>()
