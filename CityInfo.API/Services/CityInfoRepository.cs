@@ -19,6 +19,42 @@ namespace CityInfo.API.Services
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<City>> GetCitiesAsync(
+            string? name,
+            string? searchQuery)
+        {
+            if (string.IsNullOrEmpty(name)
+                && string.IsNullOrWhiteSpace(searchQuery))
+            {
+                return await GetCitiesAsync();
+            }
+
+            // starting point to base multiple queries on
+            // IQueryable allows us to build an expression tree to send a summed query to the database resulting in less overhead
+            var collection = _context.Cities as IQueryable<City>;
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                name = name.Trim();
+                collection = collection.Where(c => c.Name == name);
+            }
+
+            // case sensitive 
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.Trim();
+                collection = collection
+                    .Where(a => a.Name
+                        .Contains(searchQuery)
+                    || (a.Description != null
+                    && a.Description.Contains(searchQuery)));
+            }
+            
+            return await collection
+                .OrderBy(c => c.Name)
+                .ToListAsync();
+        }
+
         public async Task<City?> GetCityAsync(int cityId, bool includePointsOfInterest)
         {
             if (includePointsOfInterest)
