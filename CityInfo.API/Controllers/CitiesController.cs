@@ -8,8 +8,10 @@ using System.Text.Json;
 namespace CityInfo.API.Controllers
 {
     [ApiController]
-   // [Authorize]
-    [Route("api/cities")] //the route can be based dynamically on the controller name using api/[controller]
+    // [Authorize]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
+    [Route("api/v{version:apiVersion}/cities")] //the route can be based dynamically on the controller name using api/[controller]
     public class CitiesController : ControllerBase
     {
         private readonly ICityInfoRepository _cityInfoRepository;
@@ -42,7 +44,18 @@ namespace CityInfo.API.Controllers
             return Ok(_mapper.Map<IEnumerable<CityWithoutPointsOfInterestDto>>(cityEntities));
         }
 
+        /// <summary>
+        /// Get a city by id
+        /// </summary>
+        /// <param name="id">Id of the city to get</param>
+        /// <param name="includePointsOfInterest">Whether or not to include the points of interest</param>
+        /// <returns>An IActionResult</returns>
+        /// <response code="200">Returns the requested city</response>
+        /// <response code="404">City not found</response>
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         // Account for either data type by returning an interface
         public async Task<IActionResult> GetCity(int id, bool includePointsOfInterest = false)
         {
