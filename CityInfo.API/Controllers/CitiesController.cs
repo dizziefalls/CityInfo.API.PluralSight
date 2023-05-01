@@ -8,7 +8,7 @@ using System.Text.Json;
 namespace CityInfo.API.Controllers
 {
     [ApiController]
-    [Authorize]
+   // [Authorize]
     [Route("api/cities")] //the route can be based dynamically on the controller name using api/[controller]
     public class CitiesController : ControllerBase
     {
